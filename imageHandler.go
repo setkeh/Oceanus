@@ -65,11 +65,14 @@ func postImageHandler(c echo.Context) error {
 func getImageHandler(c echo.Context) error {
 	id := c.QueryParam("ID")
 
-	ret := getImage(id)
+	ret, err := getImage(id)
+	if err != nil {
+		c.Logger().Error(err)
+	}
 	fmt.Println(ret)
 
 	var img image
 	json.Unmarshal(ret, &img)
 
-	return c.String(http.StatusOK, string(img.Src))
+	return c.String(http.StatusOK, img.Src)
 }

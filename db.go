@@ -35,10 +35,10 @@ func insertImage(i image) {
 	})
 }
 
-func getImage(id string) []byte {
-	db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+func getImage(id string) ([]byte, error) {
+	db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer db.Close()
 
@@ -55,5 +55,5 @@ func getImage(id string) []byte {
 		return nil //b.Get([]byte(id))
 	})
 
-	return ret
+	return ret, nil
 }
