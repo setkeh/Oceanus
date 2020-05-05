@@ -67,12 +67,15 @@ func getImageHandler(c echo.Context) error {
 
 	ret, err := getImage(id)
 	if err != nil {
-		c.Logger().Error(err)
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	fmt.Println(ret)
+	//fmt.Println(ret)
 
 	var img image
-	json.Unmarshal(ret, &img)
+	jsonerr := json.Unmarshal(ret, &img)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, jsonerr.Error())
+	}
 
-	return c.String(http.StatusOK, img.Src)
+	return c.String(http.StatusOK, id)
 }
