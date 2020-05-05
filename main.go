@@ -30,6 +30,7 @@ func main() {
 	e.GET("/", hello)
 	e.POST("/image", postImageHandler)
 	e.GET("/image", getImageHandler)
+	e.GET("/images", getImageListHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

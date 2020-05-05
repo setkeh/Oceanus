@@ -8,13 +8,6 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-type image struct {
-	ID  string `json:"id"`
-	Src string `json:"src"`
-	URL string `json:"url"`
-	B64 string `json:"b64"`
-}
-
 func insertImage(i image) {
 	db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
@@ -50,9 +43,34 @@ func getImage(id string) ([]byte, error) {
 		//fmt.Println(id)
 		//fmt.Println(b)
 
-		ret = b
+		ret = append(ret, b...)
 
 		return nil //b.Get([]byte(id))
+	})
+
+	return ret, nil
+}
+
+func getImageList() ([]photo, error) {
+	db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	var ret []photo
+
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Images"))
+
+		c := b.Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var pic photo
+			json.Unmarshal(v, &pic)
+			ret = append(ret, pic)
+		}
+		return nil
 	})
 
 	return ret, nil

@@ -6,16 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	guuid "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
-
-type photo struct {
-	ID  string `json:"id"`
-	Src string `json:"src"`
-	URL string `json:"url"`
-}
 
 // Handler
 func postImageHandler(c echo.Context) error {
@@ -77,5 +72,16 @@ func getImageHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, jsonerr.Error())
 	}
 
-	return c.String(http.StatusOK, id)
+	i := base64.NewDecoder(base64.StdEncoding, strings.NewReader(img.B64))
+
+	return c.Stream(http.StatusOK, "image/png", i)
+}
+
+func getImageListHandler(c echo.Context) error {
+	ret, err := getImageList()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSONPretty(http.StatusOK, ret, "\n")
 }
