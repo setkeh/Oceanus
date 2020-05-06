@@ -1,4 +1,4 @@
-FROM golang:1.12 as build-env
+FROM golang:latest as build-env
 
 WORKDIR /go/src/Oceanus
 ADD . /go/src/Oceanus
