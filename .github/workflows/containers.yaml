@@ -1,15 +1,15 @@
 name: Build Oceanus ScreenShotApi Server
 on: [push]
 jobs:
-  build-ecr-container:
+  Build-Oceanus:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . -t setkeh/Oceanus:latest
+      run: docker build . -t setkeh/oceanus:latest
     - uses: anchore/scan-action@master
       with:
-        image-reference: "setkeh/Oceanus:latest"
+        image-reference: "setkeh/oceanus:latest"
         dockerfile-path: "Dockerfile"
         fail-build: true
     - name: anchore inline scan JSON results
@@ -26,4 +26,4 @@ jobs:
     - name: Docker Login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Publish Docker Image
-      run: docker push setkeh/Oceanus:latest
+      run: docker push setkeh/oceanus:latest
