@@ -10,10 +10,21 @@ import (
 
 	guuid "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/setkeh/Oceanus/models"
 )
 
-// Handler
-func postImageHandler(c echo.Context) error {
+type ImageStore interface {
+	InsertImage(models.Image)
+	Image(id string) ([]byte, error)
+	ImageList() ([]models.Photo, error)
+}
+
+var (
+	DB  ImageStore
+	URL string
+)
+
+func PostImageHandler(c echo.Context) error {
 	//fmt.Println(c.FormFile("file"))
 
 	file, err := c.FormFile("file")
@@ -39,34 +50,34 @@ func postImageHandler(c echo.Context) error {
 
 	guid := guuid.New().String()
 
-	ret := models.photo{
+	ret := models.Photo{
 		Src: file.Filename,
 		ID:  guid,
-		URL: fmt.Sprintf("%s/%s", url, guid),
+		URL: fmt.Sprintf("%s/%s", URL, guid),
 	}
 
-	i := models.image{
+	i := models.Image{
 		ID:  ret.ID,
 		Src: ret.Src,
 		URL: ret.URL,
 		B64: b64,
 	}
 
-	db.insertImage(i)
+	DB.InsertImage(i)
 
 	return c.JSON(http.StatusOK, ret)
 }
 
-func getImageHandler(c echo.Context) error {
+func GetImageHandler(c echo.Context) error {
 	id := c.QueryParam("ID")
 
-	ret, err := getImage(id)
+	ret, err := DB.Image(id)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	//fmt.Println(ret)
 
-	var img image
+	var img models.Image
 	jsonerr := json.Unmarshal(ret, &img)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, jsonerr.Error())
@@ -77,8 +88,8 @@ func getImageHandler(c echo.Context) error {
 	return c.Stream(http.StatusOK, "image/png", i)
 }
 
-func getImageListHandler(c echo.Context) error {
-	ret, err := getImageList()
+func GetImageListHandler(c echo.Context) error {
+	ret, err := DB.ImageList()
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
