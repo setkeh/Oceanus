@@ -1,13 +1,13 @@
-package main
+package models
 
-type image struct {
+type Image struct {
 	ID  string `json:"id"`
 	Src string `json:"src"`
 	URL string `json:"url"`
 	B64 string `json:"b64"`
 }
 
-type photo struct {
+type Photo struct {
 	ID  string `json:"id"`
 	Src string `json:"src"`
 	URL string `json:"url"`

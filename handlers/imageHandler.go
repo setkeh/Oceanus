@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/base64"
@@ -39,20 +39,20 @@ func postImageHandler(c echo.Context) error {
 
 	guid := guuid.New().String()
 
-	ret := photo{
+	ret := models.photo{
 		Src: file.Filename,
 		ID:  guid,
 		URL: fmt.Sprintf("%s/%s", url, guid),
 	}
 
-	i := image{
+	i := models.image{
 		ID:  ret.ID,
 		Src: ret.Src,
 		URL: ret.URL,
 		B64: b64,
 	}
 
-	insertImage(i)
+	db.insertImage(i)
 
 	return c.JSON(http.StatusOK, ret)
 }

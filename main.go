@@ -15,6 +15,13 @@ const (
 )
 
 func main() {
+	// DB Instance
+	d := db.dbClient{
+		Path: "images.db",
+	}
+
+	d.dbOpen()
+
 	// Echo instance
 	e := echo.New()
 
@@ -27,10 +34,10 @@ func main() {
 	log.Info("Logger enabled!!")
 
 	// Routes
-	e.GET("/", hello)
-	e.POST("/image", postImageHandler)
-	e.GET("/image", getImageHandler)
-	e.GET("/images", getImageListHandler)
+	e.GET("/", handlers.hello)
+	e.POST("/image", handlers.postImageHandler)
+	e.GET("/image", handlers.getImageHandler)
+	e.GET("/images", handlers.getImageListHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

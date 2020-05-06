@@ -15,3 +15,7 @@
 # vendor/
 
 Oceanus
+
+#Added by cargo
+
+/target
