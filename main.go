@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	url = "http://127.0.0.1:1323"
+	//url = "http://127.0.0.1:1323"
+	url = "https://screenshots.local.setkeh.com"
 )
 
 func main() {
