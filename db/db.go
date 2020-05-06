@@ -9,7 +9,7 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-type dbClient struct {
+type DbClient struct {
 	// Filename to the BoltDB database.
 	Path string
 
@@ -19,7 +19,7 @@ type dbClient struct {
 	db *bolt.DB
 }
 
-func (c *dbClient) dbOpen() error {
+func (c *DbClient) DbOpen() error {
 	// Open database file.
 	db, err := bolt.Open(c.Path, 0666, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
@@ -43,24 +43,21 @@ func (c *dbClient) dbOpen() error {
 	return tx.Commit()
 }
 
-func (c *dbClient) dbClose() error {
+func (c *DbClient) dbClose() error {
 	if c.db != nil {
 		return c.db.Close()
 	}
 	return nil
 }
 
-func (c *dbClient) insertImage(i models.Image) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+func (c *DbClient) InsertImage(i models.Image) {
 	tx, err := c.db.Begin(true)
 	if err != nil {
-		log.Fatal(d.Err)
+		log.Fatal(err)
 	}
 	//defer d.Db.Close()
 
-	tx.
-	d.Db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("Images"))
+	tx.DB().Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Images"))
 
 		buf, err := json.Marshal(i)
@@ -72,16 +69,16 @@ func (c *dbClient) insertImage(i models.Image) {
 	})
 }
 
-func (d *db) getImage(id string) ([]byte, error) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
-	if d.Err != nil {
-		return nil, d.Err
+func (c *DbClient) GetImage(id string) ([]byte, error) {
+	tx, err := c.db.Begin(true)
+	if err != nil {
+		return nil, err
 	}
 	//defer db.Close()
 
 	var ret []byte
 
-	d.Db.View(func(tx *bolt.Tx) error {
+	tx.DB().View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Images")).Get([]byte(id))
 
 		//fmt.Println(id)
@@ -95,16 +92,16 @@ func (d *db) getImage(id string) ([]byte, error) {
 	return ret, nil
 }
 
-func (d *db) getImageList() ([]models.Photo, error) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
-	if d.Err != nil {
-		return nil, d.Err
+func (c *DbClient) GetImageList() ([]models.Photo, error) {
+	tx, err := c.db.Begin(true)
+	if err != nil {
+		return nil, err
 	}
 	//defer db.Close()
 
 	var ret []models.Photo
 
-	d.Db.View(func(tx *bolt.Tx) error {
+	tx.DB().View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Images"))
 
 		c := b.Cursor()

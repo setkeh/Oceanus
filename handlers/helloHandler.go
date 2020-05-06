@@ -7,6 +7,6 @@ import (
 )
 
 // Handler
-func hello(c echo.Context) error {
+func Hello(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello, World!")
 }
