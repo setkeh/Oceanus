@@ -7,11 +7,18 @@ import (
 	echoLog "github.com/labstack/gommon/log"
 	middleware "github.com/neko-neko/echo-logrus/v2"
 	"github.com/neko-neko/echo-logrus/v2/log"
+	"github.com/setkeh/Oceanus/db"
 	"github.com/setkeh/Oceanus/handlers"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	// DB Instance
+	d := db.Client{
+		Path: "images.db",
+	}
+
+	d.Open()
 	// Echo instance
 	e := echo.New()
 
@@ -24,10 +31,12 @@ func main() {
 	log.Info("Logger enabled!!")
 
 	// Routes
+	handlers.DB = &d
+	handlers.URL = url
 	e.GET("/", handlers.Hello)
-	e.POST("/image", handlers.PostImage)
-	e.GET("/image", handlers.GetImage)
-	e.GET("/images", handlers.GetImageList)
+	e.POST("/image", handlers.PostImageHandler)
+	e.GET("/image", handlers.GetImageHandler)
+	e.GET("/images", handlers.GetImageListHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

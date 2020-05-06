@@ -10,21 +10,21 @@ import (
 
 	guuid "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/setkeh/Oceanus/db"
 	"github.com/setkeh/Oceanus/models"
 )
 
-const (
-	url = "http://localhost"
-)
-
-// DB Instance
-var d = db.DbClient{
-	Path: "images.db",
+type ImageStore interface {
+	InsertImage(models.Image)
+	Image(id string) ([]byte, error)
+	ImageList() ([]models.Photo, error)
 }
 
-// Handler
-func PostImage(c echo.Context) error {
+var (
+	DB  ImageStore
+	URL string
+)
+
+func PostImageHandler(c echo.Context) error {
 	//fmt.Println(c.FormFile("file"))
 
 	d.DbOpen()
@@ -55,7 +55,7 @@ func PostImage(c echo.Context) error {
 	ret := models.Photo{
 		Src: file.Filename,
 		ID:  guid,
-		URL: fmt.Sprintf("%s/%s", url, guid),
+		URL: fmt.Sprintf("%s/%s", URL, guid),
 	}
 
 	i := models.Image{
@@ -65,16 +65,18 @@ func PostImage(c echo.Context) error {
 		B64: b64,
 	}
 
-	d.InsertImage(i)
+	DB.InsertImage(i)
 
 	return c.JSON(http.StatusOK, ret)
 }
 
-func GetImage(c echo.Context) error {
+func GetImageHandler(c echo.Context) error {
+
 	id := c.QueryParam("ID")
 	d.DbOpen()
 
-	ret, err := d.GetImage(id)
+	ret, err := DB.Image(id)
+
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
@@ -91,10 +93,10 @@ func GetImage(c echo.Context) error {
 	return c.Stream(http.StatusOK, "image/png", i)
 }
 
-func GetImageList(c echo.Context) error {
-	d.DbOpen()
 
-	ret, err := d.GetImageList()
+func GetImageListHandler(c echo.Context) error {
+	ret, err := DB.ImageList()
+
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
