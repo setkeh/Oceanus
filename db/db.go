@@ -9,6 +9,7 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
+
 type Client struct {
 	// Filename to the BoltDB database.
 	Path string
@@ -81,6 +82,7 @@ func (c *Client) Image(id string) ([]byte, error) {
 	var ret []byte
 
 	c.db.View(func(tx *bolt.Tx) error {
+
 		b := tx.Bucket([]byte("Images")).Get([]byte(id))
 
 		//fmt.Println(id)
@@ -99,11 +101,13 @@ func (c *Client) ImageList() ([]models.Photo, error) {
 	//if c.Err != nil {
 	//		return nil, d.Err
 	//	}
+
 	//defer db.Close()
 
 	var ret []models.Photo
 
 	c.db.View(func(tx *bolt.Tx) error {
+
 		b := tx.Bucket([]byte("Images"))
 
 		c := b.Cursor()

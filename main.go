@@ -12,10 +12,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	url = "http://localhost"
-)
-
 func main() {
 	// DB Instance
 	d := db.Client{
@@ -23,7 +19,6 @@ func main() {
 	}
 
 	d.Open()
-
 	// Echo instance
 	e := echo.New()
 
