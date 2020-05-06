@@ -12,6 +12,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	url = "http://127.0.0.1:1323"
+)
+
 func main() {
 	// DB Instance
 	d := db.Client{

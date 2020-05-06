@@ -27,8 +27,6 @@ var (
 func PostImageHandler(c echo.Context) error {
 	//fmt.Println(c.FormFile("file"))
 
-	d.DbOpen()
-
 	file, err := c.FormFile("file")
 	if err != nil {
 		return err
@@ -55,7 +53,7 @@ func PostImageHandler(c echo.Context) error {
 	ret := models.Photo{
 		Src: file.Filename,
 		ID:  guid,
-		URL: fmt.Sprintf("%s/%s", URL, guid),
+		URL: fmt.Sprintf("%s/image?ID=%s", URL, guid),
 	}
 
 	i := models.Image{
@@ -73,7 +71,6 @@ func PostImageHandler(c echo.Context) error {
 func GetImageHandler(c echo.Context) error {
 
 	id := c.QueryParam("ID")
-	d.DbOpen()
 
 	ret, err := DB.Image(id)
 
@@ -92,7 +89,6 @@ func GetImageHandler(c echo.Context) error {
 
 	return c.Stream(http.StatusOK, "image/png", i)
 }
-
 
 func GetImageListHandler(c echo.Context) error {
 	ret, err := DB.ImageList()

@@ -2,13 +2,11 @@ package db
 
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/setkeh/Oceanus/models"
 	bolt "go.etcd.io/bbolt"
 )
-
 
 type Client struct {
 	// Filename to the BoltDB database.
@@ -52,14 +50,7 @@ func (c *Client) Close() error {
 }
 
 func (c *Client) InsertImage(i models.Image) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
-	tx, err := c.db.Begin(true)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//defer d.Db.Close()
-
-	tx.DB().Update(func(tx *bolt.Tx) error {
+	c.db.Update(func(tx *bolt.Tx) error {
 		tx.CreateBucketIfNotExists([]byte("Images"))
 		b := tx.Bucket([]byte("Images"))
 
@@ -73,12 +64,6 @@ func (c *Client) InsertImage(i models.Image) {
 }
 
 func (c *Client) Image(id string) ([]byte, error) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
-	//if c.Err != nil {
-	//		return nil, d.Err
-	//	}
-	//defer db.Close()
-
 	var ret []byte
 
 	c.db.View(func(tx *bolt.Tx) error {
@@ -97,13 +82,6 @@ func (c *Client) Image(id string) ([]byte, error) {
 }
 
 func (c *Client) ImageList() ([]models.Photo, error) {
-	//db, err := bolt.Open("images.db", 0600, &bolt.Options{Timeout: 100 * time.Second})
-	//if c.Err != nil {
-	//		return nil, d.Err
-	//	}
-
-	//defer db.Close()
-
 	var ret []models.Photo
 
 	c.db.View(func(tx *bolt.Tx) error {
