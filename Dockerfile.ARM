@@ -3,9 +3,6 @@ FROM golang:latest as build-env
 WORKDIR /go/src/Oceanus
 ADD . /go/src/Oceanus
 
-ENV GOOS=linux
-ENV GOARCH=armv7
-
 RUN go get -d -v ./...
 RUN env GOOS=linux GOARCH=armv7 go build -o /go/bin/Oceanus
 
