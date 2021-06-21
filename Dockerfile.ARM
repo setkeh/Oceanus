@@ -4,7 +4,7 @@ WORKDIR /go/src/Oceanus
 ADD . /go/src/Oceanus
 
 RUN go get -d -v ./...
-RUN env GOOS=linux GOARCH=armv7 go build -o /go/bin/Oceanus
+RUN env GOOS=linux GOARCH=arm go build -o /go/bin/Oceanus
 
 FROM gcr.io/distroless/base
 COPY --from=build-env /go/bin/Oceanus /
