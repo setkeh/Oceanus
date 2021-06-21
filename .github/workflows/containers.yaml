@@ -8,7 +8,7 @@ jobs:
     - name: Build the Docker image
       run: docker build --no-cache . -t setkeh/oceanus:latest
     - name: Build the ARM Docker image
-      run: docker build --no-cache . -t setkeh/oceanus:arm
+      run: docker build --no-cache -f Dockerfile.ARM . -t setkeh/oceanus:arm
 #    - uses: anchore/scan-action@master
 #      with:
 #        image-reference: "setkeh/oceanus:latest"
