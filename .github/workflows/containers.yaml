@@ -6,9 +6,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . -t setkeh/oceanus:latest
+      run: docker build --no-cache . -t setkeh/oceanus:latest
     - name: Build the ARM Docker image
-      run: docker build . -t setkeh/oceanus:arm
+      run: docker build --no-cache . -t setkeh/oceanus:arm
 #    - uses: anchore/scan-action@master
 #      with:
 #        image-reference: "setkeh/oceanus:latest"
