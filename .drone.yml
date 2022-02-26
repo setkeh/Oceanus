@@ -25,23 +25,6 @@ steps:
       - name: secrets
         path: ./manifests/secrets.yml
 
-  - name: Read secrets
-    image: bitnami/jsonnet
-    commands:
-      - cat ./manifests/secrets.yml
-    volumes:
-      - name: secrets
-        path: ./manifests/secrets.yml
-
-  - name: Check Expected pattern
-    image: bitnami/jsonnet
-    commands:
-      - ls ./
-      - ls ./manifests
-    volumes:
-      - name: secrets
-        path: ./manifests/secrets.yml
-
   - name: Deploy Kube
     image: bitnami/kubectl
     commands:
