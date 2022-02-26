@@ -45,6 +45,7 @@ steps:
   - name: Deploy Kube
     image: bitnami/kubectl
     commands:
+      - kubectl apply -f ./manifests/namespace.yml
       - kubectl apply -f ./manifests/.
 
 volume:
