@@ -43,10 +43,10 @@ steps:
       - kubectl apply -f ./manifests/namespace.yml
       - kubectl apply -f ./manifests/.
     when:
-    event:
-    - promote
-    target:
-    - production
+      event:
+        - promote
+      target:
+        - production
 
 volume:
   - name: secrets
