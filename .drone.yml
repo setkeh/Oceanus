@@ -43,7 +43,7 @@ steps:
         path: ./manifests/secrets.yml
 
   - name: Deploy Kube
-    image: docker pull bitnami/kubectl
+    image: bitnami/kubectl
     commands:
       - kubectl apply -f ./manifests/.
 
