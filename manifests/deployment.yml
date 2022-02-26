@@ -21,8 +21,33 @@ spec:
         ports:
         - containerPort: 1324
         env:
-        - name: DRONE_RPC_SECRET
+        - name: BUCKET_ACCESS_KEY
           valueFrom:
            secretKeyRef:
-             name: drone-secrets
-             key: DRONE_RPC_SECRET
+             name: oceanus-secrets
+             key: BUCKET_ACCESS_KEY
+        - name: BUCKET_ENDPOINT
+          valueFrom:
+           secretKeyRef:
+             name: oceanus-secrets
+             key: BUCKET_ENDPOINT
+        - name: BUCKET_LOCATION
+          valueFrom:
+           secretKeyRef:
+             name: oceanus-secrets
+             key: BUCKET_LOCATION
+        - name: BUCKET_NAME
+          valueFrom:
+           secretKeyRef:
+             name: oceanus-secrets
+             key: BUCKET_NAME
+        - name: BUCKET_SECRET_KEY
+          valueFrom:
+           secretKeyRef:
+             name: oceanus-secrets
+             key: BUCKET_SECRET_KEY
+        - name: DB_CONNECTION_STRING
+          valueFrom:
+           secretKeyRef:
+             name: oceanus-secrets
+             key: DB_CONNECTION_STRING
