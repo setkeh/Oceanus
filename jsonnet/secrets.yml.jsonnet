@@ -1,6 +1,6 @@
 {
   apiVersion: 'v1',
-  data: {
+  stringData: {
     DB_CONNECTION_STRING: std.extVar('DB_CONNECTION_STRING'),
     BUCKET_ENDPOINT: std.extVar('BUCKET_ENDPOINT'),
     BUCKET_ACCESS_KEY: std.extVar('BUCKET_ACCESS_KEY'),
