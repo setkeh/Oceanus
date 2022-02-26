@@ -42,6 +42,11 @@ steps:
       - name: secrets
         path: ./manifests/secrets.yml
 
+  - name: Deploy Kube
+    image: docker pull bitnami/kubectl
+    commands:
+      - kubectl apply -f ./manifests/.
+
 volume:
   - name: secrets
     temp: {}
