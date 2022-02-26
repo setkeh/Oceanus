@@ -7,7 +7,20 @@ steps:
     image: bitnami/jsonnet
     user: 0
     commands:
-      - jsonnet -S jsonnet/init.jsonnet --ext-str BUCKET_ENDPOINT=${BUCKET_ENDPOINT} -V BUCKET_ACCESS_KEY=${BUCKET_ACCESS_KEY} -V BUCKET_LOCATION=${BUCKET_LOCATION} -V BUCKET_NAME=${BUCKET_NAME} -V BUCKET_SECRET_KEY=${BUCKET_SECRET_KEY} -V DB_CONNECTION_STRING=${DB_CONNECTION_STRING} -o ./manifests/secrets.yml
+      - jsonnet -S jsonnet/init.jsonnet --ext-str BUCKET_ENDPOINT=$BUCKET_ENDPOINT -V BUCKET_ACCESS_KEY=$BUCKET_ACCESS_KEY -V BUCKET_LOCATION=$BUCKET_LOCATION -V BUCKET_NAME=$BUCKET_NAME -V BUCKET_SECRET_KEY=$BUCKET_SECRET_KEY -V DB_CONNECTION_STRING=$DB_CONNECTION_STRING -o ./manifests/secrets.yml
+    environment:
+      BUCKET_ENDPOINT:
+        from_secret: BUCKET_ENDPOINT
+      BUCKET_ACCESS_KEY:
+        from_secret: BUCKET_ACCESS_KEY
+      BUCKET_LOCATION:
+        from_secret: BUCKET_LOCATION
+      BUCKET_NAME:
+        from_secret: BUCKET_NAME
+      BUCKET_SECRET_KEY:
+        from_secret: BUCKET_SECRET_KEY
+      DB_CONNECTION_STRING:
+        from_secret: DB_CONNECTION_STRING
     volumes:
       - name: secrets
         path: ./manifests/secrets.yml
