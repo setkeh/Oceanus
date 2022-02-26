@@ -1,0 +1,23 @@
+kind: pipeline
+name: oceanus
+
+steps:
+  - name: Generate Oceanus Secrets
+    image: bitnami/jsonnet
+    commands:
+      - jsonnet -S jsonnet/init.jsonnet --ext-str BUCKET_ENDPOINT=${BUCKET_ENDPOINT} -V BUCKET_ACCESS_KEY=${BUCKET_ACCESS_KEY} -V BUCKET_LOCATION=${BUCKET_LOCATION} -V BUCKET_NAME=${BUCKET_NAME} -V BUCKET_SECRET_KEY=${BUCKET_SECRET_KEY} -V DB_CONNECTION_STRING=${DB_CONNECTION_STRING} -o manifests/secrets.yml
+    volumes:
+      - name: secrets
+        path: ./manifests/secrets.yml
+
+  - name: Read secrets
+    image: bitnami/jsonnet
+    commands:
+      - cat manifests/secrets.yml
+    volumes:
+      - name: secrets
+        path: ./manifests/secrets.yml
+
+volume:
+  - name: secrets
+    temp: {}

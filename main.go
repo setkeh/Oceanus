@@ -7,7 +7,9 @@ import (
 	echoLog "github.com/labstack/gommon/log"
 	middleware "github.com/neko-neko/echo-logrus/v2"
 	"github.com/neko-neko/echo-logrus/v2/log"
-	"github.com/setkeh/Oceanus/db"
+
+	//"github.com/setkeh/Oceanus/db"
+	//"github.com/setkeh/Oceanus/bucket"
 	"github.com/setkeh/Oceanus/handlers"
 	"github.com/sirupsen/logrus"
 )
@@ -19,29 +21,29 @@ const (
 
 func main() {
 	// DB Instance
-	d := db.Client{
-		Path: "images.db",
-	}
+	//d := db.Client{
+	//	Path: "images.db",
+	//}
 
-	d.Open()
+	//d.Open()
 	// Echo instance
 	e := echo.New()
 
 	// Logger
 	log.Logger().SetOutput(os.Stdout)
-	log.Logger().SetLevel(echoLog.INFO)
+	log.Logger().SetLevel(echoLog.DEBUG)
 	log.Logger().SetFormatter(&logrus.TextFormatter{})
 	e.Logger = log.Logger()
 	e.Use(middleware.Logger())
 	log.Info("Logger enabled!!")
 
 	// Routes
-	handlers.DB = &d
-	handlers.URL = url
+	//handlers.DB = &d
+	//handlers.URL = url
 	e.GET("/", handlers.Hello)
 	e.POST("/image", handlers.PostImageHandler)
-	e.GET("/image", handlers.GetImageHandler)
-	e.GET("/images", handlers.GetImageListHandler)
+	//e.GET("/image", handlers.GetImageHandler)
+	//e.GET("/images", handlers.GetImageListHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1324"))

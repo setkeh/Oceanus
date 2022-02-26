@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oceanus
+  namespace: oceanus
+  labels:
+    app.kubernetes.io/name: oceanus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oceanus
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oceanus
+    spec:
+      containers:
+      - name: runner
+        image: setkeh/oceanus:latest
+        ports:
+        - containerPort: 1324
+        env:
+        - name: DRONE_RPC_SECRET
+          valueFrom:
+           secretKeyRef:
+             name: drone-secrets
+             key: DRONE_RPC_SECRET

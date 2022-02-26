@@ -1,102 +1,64 @@
 package db
 
 import (
-	"encoding/json"
+	"database/sql"
+	"fmt"
+	"os"
 	"time"
 
-	"github.com/setkeh/Oceanus/models"
-	bolt "go.etcd.io/bbolt"
+	//	guuid "github.com/google/uuid"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-type Client struct {
-	// Filename to the BoltDB database.
-	Path string
-
-	// Returns the current time.
-	Now func() time.Time
-
-	db *bolt.DB
+type Mysql struct {
+	DB *sql.DB
 }
 
-func (c *Client) Open() error {
-	// Open database file.
-	db, err := bolt.Open(c.Path, 0666, &bolt.Options{Timeout: 1 * time.Second})
+func (d *Mysql) Init() {
+	db, err := sql.Open("mysql", fmt.Sprintf("%s", os.Getenv("DB_CONNECTION_STRING")))
 	if err != nil {
-		return err
-	}
-	c.db = db
-
-	// Start writable transaction.
-	tx, err := c.db.Begin(true)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	// Initialize top-level buckets.
-	if _, err := tx.CreateBucketIfNotExists([]byte("Images")); err != nil {
-		return err
+		panic(err)
 	}
 
-	// Save transaction to disk.
-	return tx.Commit()
+	// See "Important settings" section.
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+
+	d.DB = db
 }
 
-func (c *Client) Close() error {
-	if c.db != nil {
-		return c.db.Close()
+func (d *Mysql) Close() error {
+	if d.DB != nil {
+		return d.DB.Close()
 	}
 	return nil
 }
 
-func (c *Client) InsertImage(i models.Image) {
-	c.db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("Images"))
-		b := tx.Bucket([]byte("Images"))
+func (d *Mysql) Insert(guid string, path string, imageName string) (int64, error) {
+	//	query := fmt.Sprintf("INSERT INTO Images VALUES(%s, %s, %s)", guid, path, imageName)
 
-		buf, err := json.Marshal(i)
-		if err != nil {
-			return err
-		}
+	in, err := d.DB.Prepare("INSERT INTO Images VALUES(?, ?, ?)")
 
-		return b.Put([]byte(i.ID), buf)
-	})
+	defer in.Close()
+
+	res, err := in.Exec(guid, path, imageName)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.RowsAffected()
 }
 
-func (c *Client) Image(id string) ([]byte, error) {
-	var ret []byte
+func (d *Mysql) GetByID(guid string) (string, error) {
+	out, err := d.DB.Prepare(fmt.Sprintf("SELECT imagePath FROM Images WHERE id = %s", guid))
+	if err != nil {
+		return "", err
+	}
 
-	c.db.View(func(tx *bolt.Tx) error {
+	defer out.Close()
 
-		b := tx.Bucket([]byte("Images")).Get([]byte(id))
-
-		//fmt.Println(id)
-		//fmt.Println(b)
-
-		ret = append(ret, b...)
-
-		return nil //b.Get([]byte(id))
-	})
-
-	return ret, nil
-}
-
-func (c *Client) ImageList() ([]models.Photo, error) {
-	var ret []models.Photo
-
-	c.db.View(func(tx *bolt.Tx) error {
-
-		b := tx.Bucket([]byte("Images"))
-
-		c := b.Cursor()
-
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			var pic models.Photo
-			json.Unmarshal(v, &pic)
-			ret = append(ret, pic)
-		}
-		return nil
-	})
-
-	return ret, nil
+	var path string
+	out.QueryRow(1).Scan(&path)
+	return path, nil
 }

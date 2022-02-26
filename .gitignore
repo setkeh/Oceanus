@@ -19,3 +19,7 @@ Oceanus
 #Added by cargo
 
 /target
+
+export.sh
+manifests/secrets.yml
+images.db
