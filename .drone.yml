@@ -34,7 +34,6 @@ steps:
         from_secret: DOCKER_PASSWORD
     repo: setkeh/oceanus
     tags:
-      - latest
       - ${DRONE_COMMIT}
 
   - name: Deploy Kube
