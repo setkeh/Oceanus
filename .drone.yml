@@ -35,7 +35,7 @@ steps:
     repo: setkeh/oceanus
     tag:
       - latest
-      - '${DRONE_COMMIT}'
+      - ${DRONE_COMMIT}
 
   - name: Deploy Kube
     image: bitnami/kubectl
