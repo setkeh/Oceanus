@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: oceanus-route
+  namespace: oceanus
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`oceanus.setkeh.com`)
+    kind: Rule
+    services:
+      - name: oceanus
+        passHostHeader: true
+        port: 1324
+  tls:
+    secretName: setkeh-cert
