@@ -51,3 +51,5 @@ spec:
            secretKeyRef:
              name: oceanus-secrets
              key: DB_CONNECTION_STRING
+        - name: BACKEND_TYPE
+          value: "BUCKET"
