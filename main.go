@@ -42,7 +42,7 @@ func main() {
 	//handlers.URL = url
 	e.GET("/", handlers.Hello)
 	e.POST("/image", handlers.PostImageHandler)
-	//e.GET("/image", handlers.GetImageHandler)
+	e.GET("/image", handlers.GetImageHandler)
 	//e.GET("/images", handlers.GetImageListHandler)
 
 	// Start server

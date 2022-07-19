@@ -51,14 +51,14 @@ func (d *Mysql) Insert(guid string, path string, imageName string) (int64, error
 }
 
 func (d *Mysql) GetByID(guid string) (string, error) {
-	out, err := d.DB.Prepare(fmt.Sprintf("SELECT imagePath FROM Images WHERE id = %s", guid))
+	/*out, err := d.DB.Prepare(fmt.Sprintf("SELECT imagePath FROM Images WHERE id = '%s'", guid))
 	if err != nil {
 		return "", err
 	}
 
-	defer out.Close()
+	defer out.Close()*/
 
 	var path string
-	out.QueryRow(1).Scan(&path)
+	d.DB.QueryRow(fmt.Sprintf("SELECT imagePath FROM Images WHERE id = '%s'", guid)).Scan(&path)
 	return path, nil
 }
